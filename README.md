@@ -74,7 +74,7 @@ RUST_LOG=debug ./target/release/embedded-debugger-mcp
 
 2. **Configure MCP Clients**
 
-#### Claude Desktop Configuration
+#### Claude Desktop Configuration Example
 
 Add to Claude Desktop configuration file:
 
@@ -112,6 +112,8 @@ Configuration file locations:
 - Windows: `%APPDATA%\\Claude\\claude_desktop_config.json`
 - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - Linux: `~/.config/Claude/claude_desktop_config.json`
+
+Other examples for other tools like cursor ,claude code  etc. please refer to the corresponding tool documentation
 
 ## 🎯 Try the STM32 Demo
 

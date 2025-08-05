@@ -74,7 +74,7 @@ RUST_LOG=debug ./target/release/embedded-debugger-mcp
 
 2. **配置 MCP 客户端**
 
-#### Claude Desktop 配置
+#### Claude Desktop 配置示例
 
 添加到 Claude Desktop 配置文件:
 
@@ -107,6 +107,8 @@ RUST_LOG=debug ./target/release/embedded-debugger-mcp
   }
 }
 ```
+
+其他例如cursor ,claude code 等参考对应工具文档
 
 ## 🎯 试试 STM32 演示
 
