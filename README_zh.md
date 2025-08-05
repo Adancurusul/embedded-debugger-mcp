@@ -60,19 +60,7 @@ cargo build --release
 
 ### 基本使用
 
-1. **启动 MCP 服务器**
-```bash
-# 运行 MCP 服务器
-./target/release/embedded-debugger-mcp
-
-# 带调试日志
-RUST_LOG=debug ./target/release/embedded-debugger-mcp
-
-# 使用自定义配置
-./target/release/embedded-debugger-mcp --config config.toml
-```
-
-2. **配置 MCP 客户端**
+**配置 MCP 客户端**
 
 #### Claude Desktop 配置示例
 

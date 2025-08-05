@@ -60,19 +60,7 @@ cargo build --release
 
 ### Basic Usage
 
-1. **Start the MCP Server**
-```bash
-# Run the MCP server
-./target/release/embedded-debugger-mcp
-
-# With debug logging
-RUST_LOG=debug ./target/release/embedded-debugger-mcp
-
-# With custom configuration
-./target/release/embedded-debugger-mcp --config config.toml
-```
-
-2. **Configure MCP Clients**
+**Configure MCP Clients**
 
 #### Claude Desktop Configuration Example
 
@@ -107,11 +95,6 @@ Add to Claude Desktop configuration file:
   }
 }
 ```
-
-Configuration file locations:
-- Windows: `%APPDATA%\\Claude\\claude_desktop_config.json`
-- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- Linux: `~/.config/Claude/claude_desktop_config.json`
 
 Other examples for other tools like cursor ,claude code  etc. please refer to the corresponding tool documentation
 
