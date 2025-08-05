@@ -1,0 +1,15 @@
+# RTT Bidirectional Communication Demo Configuration
+
+[default.general]
+chip = "STM32G431CBTx"
+halt_after_reset = false
+
+[default.rtt]
+enabled = true
+channels = [
+    { up = 0, name = "Terminal", format = "String" },
+    { up = 1, name = "Data", format = "String" },
+    { up = 2, name = "Debug", format = "String" },
+    { down = 0, name = "Commands" },
+    { down = 1, name = "Config" },
+]

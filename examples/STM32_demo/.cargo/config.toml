@@ -1,0 +1,14 @@
+# This file was automatically generated.
+
+[target.thumbv7em-none-eabi]
+runner = 'probe-rs run --chip STM32G431CBTx'
+
+[build]
+target = "thumbv7em-none-eabi"
+
+[env]
+DEFMT_LOG = "trace"
+
+[unstable]
+build-std = ["core"]
+build-std-features = ["panic_immediate_abort"]
