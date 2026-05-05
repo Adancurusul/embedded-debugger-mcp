@@ -20,9 +20,71 @@ use super::types::*;
 // Flash types will be used through crate::flash:: prefix
 use crate::rtt::RttManager;
 
+
+use serde::{Deserialize, Serialize}; //
+use schemars::JsonSchema;
+
 // Probe-rs imports
 use probe_rs::probe::list::Lister;
 use probe_rs::{Session, Permissions, CoreStatus, MemoryInterface, RegisterValue};
+
+#[derive(Deserialize, Serialize, JsonSchema, Debug)]
+#[serde(rename_all = "kebab-case")] 
+pub enum CustomProbeType {
+    #[serde(rename = "opella-xd")] OpellaXd,
+    #[serde(rename = "opella-ld")] OpellaLd,
+    #[serde(rename = "vitra-xs")] VitraXs,
+}
+
+#[derive(Deserialize, Serialize, JsonSchema, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum CustomTransportType {
+    Jtag,
+    Swd,
+    Cjtag,
+}
+
+#[derive(serde::Deserialize, schemars::JsonSchema)]
+pub struct ListCustomProbesArgs {} 
+
+#[derive(Deserialize, Serialize, JsonSchema)]
+pub struct CustomProbeParams {
+    /// The specific probe model.
+    pub probe_type: CustomProbeType,
+    /// Serial number (default: "2081106").
+    #[serde(default = "default_serial")]
+    pub instance: String,
+    /// Transport protocol.
+    pub transport: CustomTransportType,
+    /// JTAG frequency (default: "1000KHz").
+    #[serde(default = "default_freq")]
+    pub jtag_frequency: String,
+    /// GDB port (default: "54321").
+    #[serde(default = "default_port")]
+    pub gdb_port: String,
+    /// Target reset mode (default: "0").
+    #[serde(default = "default_reset")]
+    pub target_reset: String,
+
+    /// Target device name (default: "lpc4370").
+    #[serde(default = "default_device")]
+    pub device: String,
+    /// TAP number (default: "3").
+    #[serde(default = "default_tap")]
+    pub tap_number: String,
+    /// Core number (default: "0").
+    #[serde(default = "default_core")]
+    pub core_number: String,
+}
+
+// Default functions for Serde
+fn default_serial() -> String { "2081106".to_string() }
+fn default_freq() -> String { "1000KHz".to_string() }
+fn default_port() -> String { "54321".to_string() }
+fn default_reset() -> String { "0".to_string() }
+fn default_device() -> String { "lpc4370".to_string() }
+fn default_tap() -> String { "3".to_string() }
+fn default_core() -> String { "0".to_string() }
 
 /// Debug session information
 #[derive(Debug)]
@@ -65,6 +127,77 @@ impl EmbeddedDebuggerToolHandler {
     // =============================================================================
     // Debugger Management Tools (4 tools)
     // =============================================================================
+
+#[tool(description = "Query the proprietary firmware to list connected probes and their serial numbers")]
+    async fn list_custom_probes(&self, Parameters(_args): Parameters<ListCustomProbesArgs>) -> Result<CallToolResult, McpError> {
+        info!("Sending --list-probes command to firmware...");
+
+        // Use a relative path to the risc-v GDB server executable
+        let exe_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("src/debugger/gdbserver-riscv/ash-riscv-gdb-server.exe");
+        
+        // Execute the command with the exact firmware flag
+        let output = std::process::Command::new(&exe_path)
+            .arg("--list-probes") 
+            .output(); 
+
+        match output {
+            Ok(out) => {
+                let stdout = String::from_utf8_lossy(&out.stdout).to_string();
+                
+                if out.status.success() {
+                    Ok(CallToolResult::success(vec![Content::text(format!(
+                        "📋 Firmware Reported Probes:\n\n{}", stdout
+                    ))]))
+                } else {
+                    let stderr = String::from_utf8_lossy(&out.stderr).to_string();
+                    Err(McpError::internal_error(format!("❌ Firmware Error: {}", stderr), None))
+                }
+            }
+            Err(e) => Err(McpError::internal_error(format!("❌ Failed to reach firmware: {}", e), None))
+        }
+    }
+
+
+    #[tool(description = "Activate the custom proprietary GDB probe (Opella-XD, Opella-LD, Vitra-XS)")]
+async fn activate_custom_probe(&self, Parameters(p): Parameters<CustomProbeParams>) -> Result<CallToolResult, McpError> {
+    info!("Activating custom probe: {:?}", p.probe_type);
+
+ let probe_str = match p.probe_type {
+        CustomProbeType::OpellaXd => "opella-xd",
+        CustomProbeType::OpellaLd => "opella-ld",
+        CustomProbeType::VitraXs => "vitra-xs",
+    };
+
+    let transport_str = match p.transport {
+        CustomTransportType::Jtag => "jtag",
+        CustomTransportType::Swd => "swd",
+        CustomTransportType::Cjtag => "cjtag",
+    };
+
+    // Command execution using std::process
+    // Use a relative path to the executable
+    let exe_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("src/debugger/gdbserver-riscv/ash-riscv-gdb-server.exe");
+    let mut cmd = std::process::Command::new(&exe_path);
+
+    cmd.arg("--probe-type").arg(probe_str)
+       .arg("--instance").arg(&p.instance)
+       .arg("--transport-type").arg(transport_str)
+       .arg("--jtag-frequency").arg(&p.jtag_frequency)
+       .arg("--gdb-port").arg(&p.gdb_port)
+       .arg("--target-reset").arg(&p.target_reset)
+       .arg("--device").arg(&p.device)
+           .arg("--tap-number").arg(&p.tap_number)
+           .arg("--core-number").arg(&p.core_number);
+
+    match cmd.spawn() {
+        Ok(child) => {
+            let msg = format!("✅ Custom GDB Server started! PID: {}", child.id());
+            Ok(CallToolResult::success(vec![Content::text(msg)]))
+        }
+        Err(e) => Err(McpError::internal_error(format!("❌ Failed to launch: {}", e), None))
+    }
+}
+
 
     #[tool(description = "List all available debug probes (J-Link, ST-Link, DAPLink, etc.)")]
     async fn list_probes(&self, Parameters(_args): Parameters<ListProbesArgs>) -> Result<CallToolResult, McpError> {
