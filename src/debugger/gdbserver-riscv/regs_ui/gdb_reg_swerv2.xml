@@ -1,0 +1,204 @@
+<?xml version="1.0"?>
+<!DOCTYPE target SYSTEM "gdb-target.dtd">
+<target version="1.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+<architecture>riscv:rv32</architecture>
+<xi:include href="riscv_32bit-cpu.xml"/>
+<xi:include href="riscv_32bit-csr.xml"/>
+<feature name="org.gnu.gdb.riscv.wdc_csr">
+<struct id="mrac_reg" size="4">
+  <field name="side_effect" start="31" end="31"/>
+  <field name="cacheable" start="30" end="30"/>
+  <field name="region" start="0" end="15"/>
+</struct>
+<reg name="mrac" bitsize="32" regnum="2049" save-restore="no" type="mrac_reg" group="WDC" description="Region access control register"/>
+<struct id="mcpc_reg" size="4">
+  <field name="pause" start="0" end="31"/>
+</struct>
+<reg name="mcpc" bitsize="32" regnum="2051" save-restore="no" type="mcpc_reg" group="WDC" description="Core pause control register"/>
+<struct id="dmst_reg" size="4">
+  <field name="fence" start="1" end="1"/>
+  <field name="fence.i" start="0" end="0"/>
+</struct>
+<reg name="dmst" bitsize="32" regnum="2053" save-restore="no" type="dmst_reg" group="WDC" description="Memory synchronization trigger register"/>
+<enum id="mpmc_reg_haltie" size="4">
+  <evalue name="Donot change mie bit of mstatus" value="0"/>
+  <evalue name="Set mie bit of mstatus" value="1"/>
+</enum>
+<struct id="mpmc_reg" size="4">
+  <field name="haltie" start="1" end="1" type="mpmc_reg_haltie"/>
+  <field name="halt" start="0" end="0"/>
+</struct>
+<reg name="mpmc" bitsize="32" regnum="2055" save-restore="no" type="mpmc_reg" group="WDC" description="power management control register"/>
+<enum id="dicawics_reg_array" size="4">
+  <evalue name="I_cache data array" value="0"/>
+  <evalue name="I_cache tag array and status" value="1"/>
+</enum>
+<struct id="dicawics_reg" size="4">
+  <field name="array" start="24" end="24" type="dicawics_reg_array"/>
+  <field name="way" start="20" end="21"/>
+  <field name="index" start="3" end="16"/>
+</struct>
+<reg name="dicawics" bitsize="32" regnum="2057" save-restore="no" type="dicawics_reg" group="WDC" description="I_cache array/way/index selection register"/>
+<reg name="dicad0" bitsize="32" regnum="2058" save-restore="no" type="uint32" group="WDC" description="I_cache array data 0 register"/>
+<reg name="dicad1" bitsize="32" regnum="2059" save-restore="no" type="uint32" group="WDC" description="I_cache array data 1 register"/>
+<enum id="dicago_reg_go" size="4">
+  <evalue name="Triggers an I_cache read" value="0"/>
+  <evalue name="Triggers an I_cache write" value="1"/>
+</enum>
+<struct id="dicago_reg" size="4">
+  <field name="go" start="0" end="0" type="dicago_reg_go"/>
+</struct>
+<reg name="dicago" bitsize="32" regnum="2060" save-restore="no" type="dicago_reg" group="WDC" description="I_cache array go register"/>
+<struct id="dicad0h_reg" size="4">
+  <field name="instr" start="0" end="31"/>
+</struct>
+<reg name="dicad0h" bitsize="32" regnum="2061" save-restore="no" type="dicad0h_reg" group="WDC" description="I_cache array data 0 high register"/>
+<enum id="mfdht_reg_enable" size="4">
+  <evalue name="Timeout mechanism disabled" value="0"/>
+  <evalue name="Timeout mechanism enabled" value="1"/>
+</enum>
+<struct id="mfdht_reg" size="4">
+  <field name="thresh" start="1" end="5"/>
+  <field name="enable" start="0" end="0" type="mfdht_reg_enable"/>
+</struct>
+<reg name="mfdht" bitsize="32" regnum="2063" save-restore="no" type="mfdht_reg" group="WDC" description="Force debug halt threshold register"/>
+<enum id="mfdhs_reg_lsu" size="4">
+  <evalue name="No transaction have been prematurely terminated" value="0"/>
+  <evalue name="One or more transactions have been prematurely terminated" value="1"/>
+</enum>
+<enum id="mfdhs_reg_ifu" size="4">
+  <evalue name="No transaction have been prematurely terminated" value="0"/>
+  <evalue name="One or more transactions have been prematurely terminated" value="1"/>
+</enum>
+<struct id="mfdhs_reg" size="4">
+  <field name="lsu" start="1" end="1" type="mfdhs_reg_lsu"/>
+  <field name="ifu" start="0" end="0" type="mfdhs_reg_ifu"/>
+</struct>
+<reg name="mfdhs" bitsize="32" regnum="2064" save-restore="no" type="mfdhs_reg" group="WDC" description="Force debug halt status register"/>
+<reg name="mitcnt0" bitsize="32" regnum="2067" save-restore="no" type="uint32" group="WDC" description="Internal timer counter 0 register"/>
+<reg name="mitb0" bitsize="32" regnum="2068" save-restore="no" type="uint32" group="WDC" description="Internal timer bound 0 register"/>
+<enum id="mitctl0_reg_pause_en" size="4">
+  <evalue name="Counting disabled" value="0"/>
+  <evalue name="Counting enabled" value="1"/>
+</enum>
+<enum id="mitctl0_reg_halt_en" size="4">
+  <evalue name="Counting disabled" value="0"/>
+  <evalue name="Counting enabled" value="1"/>
+</enum>
+<enum id="mitctl0_reg_enable" size="4">
+  <evalue name="Counting disabled" value="0"/>
+  <evalue name="Counting enabled" value="1"/>
+</enum>
+<struct id="mitctl0_reg" size="4">
+  <field name="pause_en" start="2" end="2" type="mitctl0_reg_pause_en"/>
+  <field name="halt_en" start="1" end="1" type="mitctl0_reg_halt_en"/>
+  <field name="enable" start="0" end="0" type="mitctl0_reg_enable"/>
+</struct>
+<reg name="mitctl0" bitsize="32" regnum="2069" save-restore="no" type="mitctl0_reg" group="WDC" description="Internal timer control 0 register"/>
+<reg name="mitcnt1" bitsize="32" regnum="2070" save-restore="no" type="uint32" group="WDC" description="Internal timer counter 1 register"/>
+<reg name="mitb1" bitsize="32" regnum="2071" save-restore="no" type="uint32" group="WDC" description="Internal timer bound 1 register"/>
+<enum id="mitctl1_reg_cascade" size="4">
+  <evalue name="Cascade disabled" value="0"/>
+  <evalue name="Cascade enabled" value="1"/>
+</enum>
+<enum id="mitctl1_reg_pause_en" size="4">
+  <evalue name="Counting disabled" value="0"/>
+  <evalue name="Counting enabled" value="1"/>
+</enum>
+<enum id="mitctl1_reg_halt_en" size="4">
+  <evalue name="Counting disabled" value="0"/>
+  <evalue name="Counting enabled" value="1"/>
+</enum>
+<enum id="mitctl1_reg_enable" size="4">
+  <evalue name="Counting disabled" value="0"/>
+  <evalue name="Counting enabled" value="1"/>
+</enum>
+<struct id="mitctl1_reg" size="4">
+  <field name="cascade" start="3" end="3" type="mitctl1_reg_cascade"/>
+  <field name="pause_en" start="2" end="2" type="mitctl1_reg_pause_en"/>
+  <field name="halt_en" start="1" end="1" type="mitctl1_reg_halt_en"/>
+  <field name="enable" start="0" end="0" type="mitctl1_reg_enable"/>
+</struct>
+<reg name="mitctl1" bitsize="32" regnum="2072" save-restore="no" type="mitctl1_reg" group="WDC" description="Internal timer control 1 register"/>
+<struct id="micect_reg" size="4">
+  <field name="thresh" start="27" end="31"/>
+  <field name="count" start="0" end="26" />
+</struct>
+<reg name="micect" bitsize="32" regnum="2097" save-restore="no" type="micect_reg" group="WDC" description="I_cache error counter/threshold"/>
+<struct id="miccmect_reg" size="4">
+  <field name="thresh" start="27" end="31"/>
+  <field name="count" start="0" end="26" />
+</struct>
+<reg name="miccmect" bitsize="32" regnum="2098" save-restore="no" type="miccmect_reg" group="WDC" description="ICCM correctable error counter/threshold"/>
+<struct id="mdccmect_reg" size="4">
+  <field name="thresh" start="27" end="31"/>
+  <field name="count" start="0" end="26" />
+</struct>
+<reg name="mdccmect" bitsize="32" regnum="2099" save-restore="no" type="mdccmect_reg" group="WDC" description="DCCM correctable error counter/threshold"/>
+<struct id="mcgc_reg" size="4">
+  <field name="MISCELLANEOUS" start="8" end="8" />
+  <field name="DEC" start="7" end="7"/>
+  <field name="EXU" start="6" end="6" />
+  <field name="IFU" start="5" end="5"/>
+  <field name="LSU" start="4" end="4" /> 
+  <field name="BUS" start="3" end="3"/>
+  <field name="PIC" start="2" end="2" />  
+  <field name="DCCM" start="1" end="1"/>
+  <field name="ICCM" start="0" end="0" />
+</struct>
+<reg name="mcgc" bitsize="32" regnum="2105" save-restore="no" type="mcgc_reg" group="WDC" description="Clock gating control"/>
+<struct id="mfdc_reg" size="4">
+  <field name="External load forwarding disable" start="11" end="11"/>
+  <field name="Dual issue disable" start="10" end="10"/>
+  <field name="Core ECC check disable" start="8" end="8" />
+  <field name="Side effect posted disable" start="6" end="6"/>
+  <field name="Branch prediction disable" start="3" end="3"/>
+  <field name="Write buffer coalescing disable" start="2" end="2" />  
+  <field name="Pipelining disable" start="0" end="0" />
+</struct>
+<reg name="mfdc" bitsize="32" regnum="2106" save-restore="no" type="mfdc_reg" group="WDC" description="Feature disable control"/>
+<struct id="mhartstart_reg" size="4">
+  <field name="start1" start="1" end="1"/>
+  <field name="start0" start="0" end="0"/>
+</struct>
+<reg name="mhartstart" bitsize="32" regnum="2109" save-restore="no" type="mhartstart_reg" group="WDC" description="Hart start control register"/>
+<struct id="mnmipdel_reg" size="4">
+  <field name="nmipdel1" start="1" end="1"/>
+  <field name="nmipdel0" start="0" end="0"/>
+</struct>
+<reg name="mnmipdel" bitsize="32" regnum="2111" save-restore="no" type="mnmipdel_reg" group="WDC" description="NMI pin delegation register"/>
+<reg name="mscause" bitsize="32" regnum="2112" save-restore="no" type="mscause_reg" group="WDC" description="Machine secondary cause register"/>
+<reg name="mdeau" bitsize="32" regnum="3073" save-restore="no" type="uint32" group="WDC" description="D-Bus error address unlock"/>
+<struct id="meivt_reg" size="4">
+  <field name="base" start="10" end="31"/>
+</struct>
+<reg name="meivt" bitsize="32" regnum="3081" save-restore="no" type="meivt_reg" group="WDC" description="External interrupt vector table"/>
+<struct id="meipt_reg" size="4">
+  <field name="pri_thresh" start="0" end="3"/>
+</struct>
+<reg name="meipt" bitsize="32" regnum="3082" save-restore="no" type="meipt_reg" group="WDC" description="External interrupt priority threshold"/>
+<reg name="meicpct" bitsize="32" regnum="3083" save-restore="no" type="uint32" group="WDC" description="External interrupt claim ID / priority level capture trigger"/>
+<struct id="meicidpl_reg" size="4">
+  <field name="curr_pri" start="0" end="3" description= "Priority level of current interrupt service routine" />
+</struct>
+<reg name="meicidpl" bitsize="32" regnum="3084" save-restore="no" type="meicidpl_reg" group="WDC" description="External interrupt claim ID’s priority level"/>
+<struct id="meicurpl_reg" size="4">
+  <field name="curr_pri" start="0" end="3" description= "Priority level of current interrupt service routine" />
+</struct>
+<reg name="meicurpl" bitsize="32" regnum="3085" save-restore="no" type="meicurpl_reg" group="WDC" description="External interrupt current priority level"/>
+<struct id="mdseac_reg" size="4">
+  <field name="err_addr" start="0" end="31" description= "Address of first occurrence of D-bus store or non-blocking load error"/>
+</struct>
+<reg name="mdseac" bitsize="32" regnum="4097" save-restore="no" type="mdseac_reg" group="WDC" description="D-bus first error address capture"/>
+<struct id="mhartnum_reg" size="4">
+  <field name="hartnum" start="0" end="1" description= "Total number of harts in this core"/>
+</struct>
+<reg name="mhartnum" bitsize="32" regnum="4101" save-restore="no" type="mhartnum_reg" group="WDC" description="Total number harts"/>
+<struct id="meihap_reg" size="4">
+  <field name="field" start="10" end="31" description= "Base field of meivt register" />
+  <field name="claimed" start="2" end="9" description= "Lowest source ID with highest priority" />
+   <field name="00" start="0" end="1" description= "Must read as 00" />
+</struct>
+<reg name="meihap" bitsize="32" regnum="4105" save-restore="no" type="meihap_reg" group="WDC" description="External interrupt handler address pointer"/>
+</feature>
+</target>

@@ -1,0 +1,318 @@
+<?xml version="1.0"?>
+<!DOCTYPE target SYSTEM "gdb-target.dtd">
+<feature name="org.gnu.gdb.riscv.csr">
+<struct id="mvendorid_reg" size="8">
+  <field name="bank" start="7" end="63"/>
+  <field name="offset" start="0" end="6"/>
+</struct>
+<reg name="mvendorid" bitsize="64" regnum="3922" save-restore="no" type="mvendorid_reg" group="CSR" description="Vendor ID"/>
+<reg name="marchid" bitsize="64" regnum="3923" save-restore="no" type="uint64" group="CSR" description="Architecture ID"/>
+<reg name="mimpid" bitsize="64" regnum="3924" save-restore="no" type="uint64" group="CSR" description="Implementation ID"/>
+<reg name="mhartid" bitsize="64" regnum="3925" save-restore="no" type="uint64" group="CSR" description="Hardware thread ID"/>
+<struct id="mstatus_reg" size="8">
+  <field name="SD" start="63" end="63"/>
+  <field name="SXL" start="34" end="35"/>
+  <field name="UXL" start="32" end="33"/>
+  <field name="TSR" start="22" end="22"/>
+  <field name="TW" start="21" end="21"/>
+  <field name="TVM" start="20" end="20"/>
+  <field name="MXR" start="19" end="19"/>
+  <field name="SUM" start="18" end="18"/>
+  <field name="MPRV" start="17" end="17"/>
+  <field name="XS" start="15" end="16"/>
+  <field name="FS" start="13" end="14"/>
+  <field name="MPP" start="11" end="12"/>
+  <field name="SPP" start="8" end="8"/>
+  <field name="MPIE" start="7" end="7"/>
+  <field name="SPIE" start="5" end="5"/>
+  <field name="UPIE" start="4" end="4"/>
+  <field name="MIE" start="3" end="3"/>
+  <field name="SIE" start="1" end="1"/>
+  <field name="UIE" start="0" end="0"/>
+</struct>
+<reg name="mstatus" bitsize="64" regnum="833" save-restore="no" type="mstatus_reg" group="CSR" description="Machine status register"/>
+<enum id="arch" size="8">
+  <evalue name="RV32" value="1"/>
+  <evalue name="RV64" value="2"/>
+  <evalue name="RV128" value="3"/>
+</enum>
+<struct id="misa_reg" size="8">
+  <field name="MXL" start="62" end="63" type="arch"/>
+  <field name="WARL" start="0" end="25"/>
+</struct>
+<reg name="misa" bitsize="64" regnum="834" save-restore="no" type="misa_reg" group="CSR" description="ISA and extensions"/>
+<struct id="mie_reg" size="8">
+  <field name="MEIE" start="11" end="11"/>
+  <field name="SEIE" start="9" end="9"/>
+  <field name="UEIE" start="8" end="8"/>
+  <field name="MTIE" start="7" end="7"/>
+  <field name="STIE" start="5" end="5"/>
+  <field name="UTIE" start="4" end="4"/>
+  <field name="MSIE" start="3" end="3"/>
+  <field name="SSIE" start="1" end="1"/>
+  <field name="USIE" start="0" end="0"/>
+</struct>
+<reg name="mie" bitsize="64" regnum="837" save-restore="no" type="mie_reg" group="CSR" description="Machine interrupt-enable register"/>
+<enum id="mtvec_reg_mode" size="8">
+  <evalue name="direct" value="0"/>
+  <evalue name="vectored" value="1"/>
+</enum>
+<struct id="mtvec_reg" size="8">
+  <field name="base" start="2" end="63"/>
+  <field name="mode" start="0" end="1"  type="mtvec_reg_mode"/>
+</struct>
+<reg name="mtvec" bitsize="64" regnum="838" save-restore="no" type="mtvec_reg" group="CSR" description="Machine trap-handler base address"/>
+<struct id="mcounteren_reg" size="8">
+  <field name="HPM31" start="31" end="31"/>
+  <field name="HPM30" start="30" end="30"/>
+  <field name="HPM29" start="29" end="29"/>
+  <field name="HPM28" start="28" end="28"/>
+  <field name="HPM27" start="27" end="27"/>
+  <field name="HPM26" start="26" end="26"/>
+  <field name="HPM25" start="25" end="25"/>
+  <field name="HPM24" start="24" end="24"/>
+  <field name="HPM23" start="23" end="23"/>
+  <field name="HPM22" start="22" end="22"/>
+  <field name="HPM21" start="21" end="21"/>
+  <field name="HPM20" start="20" end="20"/>
+  <field name="HPM19" start="19" end="19"/>
+  <field name="HPM18" start="18" end="18"/>
+  <field name="HPM17" start="17" end="17"/>
+  <field name="HPM16" start="16" end="16"/>
+  <field name="HPM15" start="15" end="15"/>
+  <field name="HPM14" start="14" end="14"/>
+  <field name="HPM13" start="13" end="13"/>
+  <field name="HPM12" start="12" end="12"/>
+  <field name="HPM11" start="11" end="11"/>
+  <field name="HPM10" start="10" end="10"/>
+  <field name="HPM9" start="9" end="9"/>
+  <field name="HPM8" start="8" end="8"/>
+  <field name="HPM7" start="7" end="7"/>
+  <field name="HPM6" start="6" end="6"/>
+  <field name="HPM5" start="5" end="5"/>
+  <field name="HPM4" start="4" end="4"/>
+  <field name="HPM3" start="3" end="3"/>
+  <field name="IR" start="2" end="2"/>
+  <field name="TM" start="1" end="1"/>
+  <field name="CY" start="0" end="0"/>
+</struct>
+<reg name="mcounteren" bitsize="64" regnum="839" save-restore="no" type="uint64" group="CSR" description="Machine counter enable"/>
+<reg name="mhpmevent3" bitsize="64" regnum="868" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent4" bitsize="64" regnum="869" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent5" bitsize="64" regnum="870" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent6" bitsize="64" regnum="871" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent7" bitsize="64" regnum="872" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent8" bitsize="64" regnum="873" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent9" bitsize="64" regnum="874" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent10" bitsize="64" regnum="875" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent11" bitsize="64" regnum="876" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent12" bitsize="64" regnum="877" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent13" bitsize="64" regnum="878" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent14" bitsize="64" regnum="879" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent15" bitsize="64" regnum="880" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent16" bitsize="64" regnum="881" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent17" bitsize="64" regnum="882" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent18" bitsize="64" regnum="883" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent19" bitsize="64" regnum="884" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent20" bitsize="64" regnum="885" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent21" bitsize="64" regnum="886" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent22" bitsize="64" regnum="887" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent23" bitsize="64" regnum="888" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent24" bitsize="64" regnum="889" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent25" bitsize="64" regnum="890" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent26" bitsize="64" regnum="891" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent27" bitsize="64" regnum="892" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent28" bitsize="64" regnum="893" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent29" bitsize="64" regnum="894" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent30" bitsize="64" regnum="895" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mhpmevent31" bitsize="64" regnum="896" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring event selector"/>
+<reg name="mscratch" bitsize="64" regnum="897" save-restore="no" type="uint64" group="CSR" description="Scratch register for machine trap handlers"/>
+<reg name="mepc" bitsize="64" regnum="898" save-restore="no" type="code_ptr" group="CSR" description="Machine exception program counter"/>
+<struct id="mcause_reg" size="8">
+  <field name="interrupt" start="63" end="63"/>
+  <field name="exception_code" start="0" end="62" type="uint64"/>
+</struct>
+<reg name="mcause" bitsize="64" regnum="899" save-restore="no" type="mcause_reg" group="CSR" description="Machine trap cause"/>
+<reg name="mtval" bitsize="64" regnum="900" save-restore="no" type="uint64" group="CSR" description="Machine bad address or instruction"/>
+<struct id="mip_reg" size="8">
+  <field name="MEIP" start="11" end="11"/>
+  <field name="SEIP" start="9" end="9"/>
+  <field name="UEIP" start="8" end="8"/>
+  <field name="MTIP" start="7" end="7"/>
+  <field name="STIP" start="5" end="5"/>
+  <field name="UTIP" start="4" end="4"/>
+  <field name="MSIP" start="3" end="3"/>
+  <field name="SSIP" start="1" end="1"/>
+  <field name="USIP" start="0" end="0"/>
+</struct>
+<reg name="mip" bitsize="64" regnum="901" save-restore="no" type="mip_reg" group="CSR" description="Machine interrupt pending"/>
+<struct id="pmpcfg0_reg" size="8">
+  <field name="pmp7cfg" start="56" end="63"/>
+  <field name="pmp6cfg" start="48" end="55"/>
+  <field name="pmp5cfg" start="40" end="47"/>
+  <field name="pmp4cfg" start="32" end="39"/>
+  <field name="pmp3cfg" start="24" end="31"/>
+  <field name="pmp2cfg" start="16" end="23"/>
+  <field name="pmp1cfg" start="8" end="15"/>
+  <field name="pmp0cfg" start="0" end="7"/>
+</struct>
+<reg name="pmpcfg0" bitsize="64" regnum="993" save-restore="no" type="pmpcfg0_reg" group="CSR" description="Physical memory protection configuration"/>
+<struct id="pmpcfg1_reg" size="8">
+  <field name="pmp7cfg" start="24" end="31"/>
+  <field name="pmp6cfg" start="16" end="23"/>
+  <field name="pmp5cfg" start="8" end="15"/>
+  <field name="pmp4cfg" start="0" end="7"/>
+</struct>
+<reg name="pmpcfg1" bitsize="64" regnum="994" save-restore="no" type="pmpcfg1_reg" group="CSR" description="Physical memory protection configuration"/>
+<struct id="pmpcfg2_reg" size="8">
+  <field name="pmp15cfg" start="56" end="63"/>
+  <field name="pmp14cfg" start="48" end="55"/>
+  <field name="pmp13cfg" start="40" end="47"/>
+  <field name="pmp12cfg" start="32" end="39"/>
+  <field name="pmp11cfg" start="24" end="31"/>
+  <field name="pmp10cfg" start="16" end="23"/>
+  <field name="pmp9cfg" start="8" end="15"/>
+  <field name="pmp8cfg" start="0" end="7"/>
+</struct>
+<reg name="pmpcfg2" bitsize="64" regnum="995" save-restore="no" type="pmpcfg2_reg" group="CSR" description="Physical memory protection configuration"/>
+<struct id="pmpcfg3_reg" size="8">
+  <field name="pmp15cfg" start="24" end="31"/>
+  <field name="pmp14cfg" start="16" end="23"/>
+  <field name="pmp13cfg" start="8" end="15"/>
+  <field name="pmp12cfg" start="0" end="7"/>
+</struct>
+<reg name="pmpcfg3" bitsize="64" regnum="996" save-restore="no" type="pmpcfg3_reg" group="CSR" description="Physical memory protection configuration"/>
+<reg name="pmpaddr0" bitsize="64" regnum="1009" save-restore="no" type="uint64" group="CSR" description="Physical memory protection address register"/>
+<reg name="pmpaddr1" bitsize="64" regnum="1010" save-restore="no" type="uint64" group="CSR" description="Physical memory protection address register"/>
+<reg name="pmpaddr2" bitsize="64" regnum="1011" save-restore="no" type="uint64" group="CSR" description="Physical memory protection address register"/>
+<reg name="pmpaddr3" bitsize="64" regnum="1012" save-restore="no" type="uint64" group="CSR" description="Physical memory protection address register"/>
+<reg name="pmpaddr4" bitsize="64" regnum="1013" save-restore="no" type="uint64" group="CSR" description="Physical memory protection address register"/>
+<reg name="pmpaddr5" bitsize="64" regnum="1014" save-restore="no" type="uint64" group="CSR" description="Physical memory protection address register"/>
+<reg name="pmpaddr6" bitsize="64" regnum="1015" save-restore="no" type="uint64" group="CSR" description="Physical memory protection address register"/>
+<reg name="pmpaddr7" bitsize="64" regnum="1016" save-restore="no" type="uint64" group="CSR" description="Physical memory protection address register"/>
+<reg name="pmpaddr8" bitsize="64" regnum="1017" save-restore="no" type="uint64" group="CSR" description="Physical memory protection address register"/>
+<reg name="pmpaddr9" bitsize="64" regnum="1018" save-restore="no" type="uint64" group="CSR" description="Physical memory protection address register"/>
+<reg name="pmpaddr10" bitsize="64" regnum="1019" save-restore="no" type="uint64" group="CSR" description="Physical memory protection address register"/>
+<reg name="pmpaddr11" bitsize="64" regnum="1020" save-restore="no" type="uint64" group="CSR" description="Physical memory protection address register"/>
+<reg name="pmpaddr12" bitsize="64" regnum="1021" save-restore="no" type="uint64" group="CSR" description="Physical memory protection address register"/>
+<reg name="pmpaddr13" bitsize="64" regnum="1022" save-restore="no" type="uint64" group="CSR" description="Physical memory protection address register"/>
+<reg name="pmpaddr14" bitsize="64" regnum="1023" save-restore="no" type="uint64" group="CSR" description="Physical memory protection address register"/>
+<reg name="pmpaddr15" bitsize="64" regnum="1024" save-restore="no" type="uint64" group="CSR" description="Physical memory protection address register"/>
+<reg name="tselect" bitsize="64" regnum="2017" save-restore="no" type="uint64" group="CSR" description="Debug/trace trigger register select"/>
+<enum id="tdata1_reg_type" size="8">
+  <evalue name="No trigger at this tselect" value="0"/>
+  <evalue name="Legacy SiFive address match trigger" value="1"/>
+  <evalue name="Trigger is an address/data match trigger" value="2"/>
+  <evalue name="Trigger is an instruction count trigger" value="3"/>
+  <evalue name="Trigger is an interrupt trigger" value="4"/>
+  <evalue name="Trigger is an exception trigger" value="5"/>
+  <evalue name="Trigger exists,but is not currently available" value="15"/>
+</enum>
+<enum id="tdata1_reg_dmode" size="8">
+  <evalue name="Debug and M-mode can write to tdata registers" value="0"/>
+  <evalue name="Only Debug Mode can write to tdata registers" value="1"/>
+</enum>
+<struct id="tdata1_reg" size="8">
+  <field name="type" start="60" end="63" type="tdata1_reg_type"/>
+  <field name="dmode" start="59" end="59" type="tdata1_reg_dmode"/>
+  <field name="data" start="0" end="58"/>
+</struct>
+<reg name="tdata1" bitsize="64" regnum="2018" save-restore="no" type="tdata1_reg" group="CSR" description="First debug/trace trigger data register"/>
+<reg name="tdata2" bitsize="64" regnum="2019" save-restore="no" type="uint64" group="CSR" description="Second debug/trace trigger data register"/>
+<reg name="tdata3" bitsize="64" regnum="2020" save-restore="no" type="uint64" group="CSR" description="Third debug/trace trigger data register"/>
+<enum id="dcsr_reg_xdebugver" size="8">
+  <evalue name="No external debug support" value="0"/>
+  <evalue name="External debug support exists" value="4"/>
+  <evalue name="External debug support, but it does not conform to any available version of the spec" value="15"/>
+</enum>
+<enum id="dcsr_reg_cause" size="8">
+  <evalue name="Ebreak instruction was executed" value="1"/>
+  <evalue name="Trigger module caused a breakpoint exception" value="2"/>
+  <evalue name="Entry to debug mode using haltreq" value="3"/>
+  <evalue name="Single stepped because step was set" value="4"/>
+  <evalue name="Hart halted directly out of reset due to resethaltreq" value="5"/>
+</enum>
+<struct id="dcsr_reg" size="8">
+  <field name="xdebugver" start="28" end="31" type="dcsr_reg_xdebugver"/>
+  <field name="ebreakm" start="15" end="15"/>
+  <field name="ebreaks" start="13" end="13"/>
+  <field name="ebreaku" start="12" end="12"/>
+  <field name="stepie" start="11" end="11"/>
+  <field name="stopcount" start="10" end="10"/>
+  <field name="stoptime" start="9" end="9"/>
+  <field name="cause" start="6" end="8" type="dcsr_reg_cause"/>
+  <field name="mprven" start="4" end="4"/>
+  <field name="nmip" start="3" end="3"/>
+  <field name="step" start="2" end="2"/>
+  <field name="prv" start="0" end="1"/>
+</struct>
+<reg name="dcsr" bitsize="64" regnum="2033" save-restore="no" type="dcsr_reg" group="CSR" description="Debug control and status register"/>
+<reg name="dpc" bitsize="64" regnum="2034" save-restore="no" type="code_ptr" group="CSR" description="Debug PC"/>
+<reg name="dscratch" bitsize="64" regnum="2035" save-restore="no" type="uint64" group="CSR" description="Debug scratch register"/>
+<reg name="mcycle" bitsize="64" regnum="2881" save-restore="no" type="uint64" group="CSR" description="Machine cycle counter"/>
+<reg name="minstret" bitsize="64" regnum="2883" save-restore="no" type="uint64" group="CSR" description="Machine instructions-retired counter"/>
+<reg name="mhpmcounter3" bitsize="64" regnum="2884" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter4" bitsize="64" regnum="2885" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter5" bitsize="64" regnum="2886" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter6" bitsize="64" regnum="2887" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter7" bitsize="64" regnum="2888" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter8" bitsize="64" regnum="2889" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter9" bitsize="64" regnum="2890" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter10" bitsize="64" regnum="2891" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter11" bitsize="64" regnum="2892" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter12" bitsize="64" regnum="2893" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter13" bitsize="64" regnum="2894" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter14" bitsize="64" regnum="2895" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter15" bitsize="64" regnum="2896" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter16" bitsize="64" regnum="2897" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter17" bitsize="64" regnum="2898" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter18" bitsize="64" regnum="2899" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter19" bitsize="64" regnum="2900" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter20" bitsize="64" regnum="2901" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter21" bitsize="64" regnum="2902" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter22" bitsize="64" regnum="2903" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter23" bitsize="64" regnum="2904" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter24" bitsize="64" regnum="2905" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter25" bitsize="64" regnum="2906" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter26" bitsize="64" regnum="2907" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter27" bitsize="64" regnum="2908" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter28" bitsize="64" regnum="2909" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter29" bitsize="64" regnum="2910" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter30" bitsize="64" regnum="2911" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mhpmcounter31" bitsize="64" regnum="2912" save-restore="no" type="uint64" group="CSR" description="Machine performance-monitoring counter"/>
+<reg name="mcycleh" bitsize="64" regnum="3009" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mcycle"/>
+<reg name="minstreth" bitsize="64" regnum="3011" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of minstret"/>
+<reg name="mhpmcounter3h" bitsize="64" regnum="3012" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter3"/>
+<reg name="mhpmcounter4h" bitsize="64" regnum="3013" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter4"/>
+<reg name="mhpmcounter5h" bitsize="64" regnum="3014" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter5"/>
+<reg name="mhpmcounter6h" bitsize="64" regnum="3015" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter6"/>
+<reg name="mhpmcounter7h" bitsize="64" regnum="3016" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter7"/>
+<reg name="mhpmcounter8h" bitsize="64" regnum="3017" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter8"/>
+<reg name="mhpmcounter9h" bitsize="64" regnum="3018" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter9"/>
+<reg name="mhpmcounter10h" bitsize="64" regnum="3019" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter10"/>
+<reg name="mhpmcounter11h" bitsize="64" regnum="3020" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter11"/>
+<reg name="mhpmcounter12h" bitsize="64" regnum="3021" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter12"/>
+<reg name="mhpmcounter13h" bitsize="64" regnum="3022" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter13"/>
+<reg name="mhpmcounter14h" bitsize="64" regnum="3023" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter14"/>
+<reg name="mhpmcounter15h" bitsize="64" regnum="3024" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter15"/>
+<reg name="mhpmcounter16h" bitsize="64" regnum="3025" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter16"/>
+<reg name="mhpmcounter17h" bitsize="64" regnum="3026" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter17"/>
+<reg name="mhpmcounter18h" bitsize="64" regnum="3027" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter18"/>
+<reg name="mhpmcounter19h" bitsize="64" regnum="3028" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter19"/>
+<reg name="mhpmcounter20h" bitsize="64" regnum="3029" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter20"/>
+<reg name="mhpmcounter21h" bitsize="64" regnum="3030" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter21"/>
+<reg name="mhpmcounter22h" bitsize="64" regnum="3031" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter22"/>
+<reg name="mhpmcounter23h" bitsize="64" regnum="3032" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter23"/>
+<reg name="mhpmcounter24h" bitsize="64" regnum="3033" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter24"/>
+<reg name="mhpmcounter25h" bitsize="64" regnum="3034" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter25"/>
+<reg name="mhpmcounter26h" bitsize="64" regnum="3035" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter26"/>
+<reg name="mhpmcounter27h" bitsize="64" regnum="3036" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter27"/>
+<reg name="mhpmcounter28h" bitsize="64" regnum="3037" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter28"/>
+<reg name="mhpmcounter29h" bitsize="64" regnum="3038" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter29"/>
+<reg name="mhpmcounter30h" bitsize="64" regnum="3039" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter30"/>
+<reg name="mhpmcounter31h" bitsize="64" regnum="3040" save-restore="no" type="uint64" group="CSR" description="Upper 32 bits of mhpmcounter31"/>
+<reg name="c_fe_dbg_mux_sel" bitsize="64" regnum="2049" save-restore="no" type="uint64" group="CSR" description="Frontend block debug mux selection"/>
+<reg name="c_mc_dbg_mux_sel" bitsize="64" regnum="2050" save-restore="no" type="uint64" group="CSR" description="Midcore block debug mux selection"/>
+<reg name="c_ls_dbg_mux_sel" bitsize="64" regnum="2051" save-restore="no" type="uint64" group="CSR" description="Load store block debug mux selection"/>
+<reg name="c_ms_dbg_mux_sel" bitsize="64" regnum="2053" save-restore="no" type="uint64" group="CSR" description="Miscellaneous block debug mux selection"/>
+</feature>

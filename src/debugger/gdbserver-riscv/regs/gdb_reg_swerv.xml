@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!DOCTYPE target SYSTEM "gdb-target.dtd">
+<target version="1.0">
+<architecture>riscv:rv32</architecture>
+<xi:include href="riscv_32bit-cpu.xml"/>
+<xi:include href="riscv_32bit-wdc-csr-swerv.xml"/>
+</target>

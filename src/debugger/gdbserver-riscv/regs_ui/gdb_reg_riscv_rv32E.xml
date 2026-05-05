@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<!DOCTYPE target SYSTEM "gdb-target.dtd">
+<target version="1.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+<xi:include href="riscv_32bit-cpu_embedded.xml"/>
+<xi:include href="riscv_32bit-csr.xml"/>
+</target>
