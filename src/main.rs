@@ -5,7 +5,7 @@ use embedded_debugger_mcp::config::{
     Command as CliCommand, ConfigCommand, ProbeCommand, SkillCommand,
 };
 use embedded_debugger_mcp::debugger::discovery::ProbeDiscovery;
-use rmcp::{transport::stdio, ServiceExt};
+use rmcp::ServiceExt;
 use serde::Serialize;
 use std::process::Command as ProcessCommand;
 use tracing::{debug, error, info};
@@ -147,10 +147,145 @@ async fn run_cli_command(
     }
 }
 
+fn compat_stdio() -> (tokio::io::DuplexStream, tokio::io::DuplexStream) {
+    compat_transport(tokio::io::stdin(), tokio::io::stdout())
+}
+
+fn compat_transport<R, W>(
+    stdin: R,
+    mut stdout: W,
+) -> (tokio::io::DuplexStream, tokio::io::DuplexStream)
+where
+    R: tokio::io::AsyncRead + Unpin + Send + 'static,
+    W: tokio::io::AsyncWrite + Unpin + Send + 'static,
+{
+    use rmcp::model::ClientJsonRpcMessage;
+    use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
+    use tokio::sync::mpsc;
+
+    let (rmcp_in_rx, mut rmcp_in_tx) = tokio::io::duplex(65536);
+    let (rmcp_out_rx, rmcp_out_tx) = tokio::io::duplex(65536);
+    let (stdout_tx, mut stdout_rx) = mpsc::unbounded_channel::<Vec<u8>>();
+
+    let stdout_tx_rmcp = stdout_tx.clone();
+    tokio::spawn(async move {
+        let mut reader = BufReader::new(rmcp_out_rx);
+        let mut line = String::new();
+        while let Ok(n) = reader.read_line(&mut line).await {
+            if n == 0 {
+                break;
+            }
+            if stdout_tx_rmcp.send(line.as_bytes().to_vec()).is_err() {
+                break;
+            }
+            line.clear();
+        }
+    });
+
+    tokio::spawn(async move {
+        while let Some(bytes) = stdout_rx.recv().await {
+            if stdout.write_all(&bytes).await.is_err() {
+                break;
+            }
+            if stdout.flush().await.is_err() {
+                break;
+            }
+        }
+    });
+
+    tokio::spawn(async move {
+        let mut reader = BufReader::new(stdin);
+        let mut line = String::new();
+        let mut initialized = false;
+
+        while let Ok(n) = reader.read_line(&mut line).await {
+            if n == 0 {
+                break;
+            }
+            let trimmed = line.trim();
+            if trimmed.is_empty() {
+                line.clear();
+                continue;
+            }
+
+            if let Ok(mut json_val) = serde_json::from_str::<serde_json::Value>(trimmed) {
+                let method = json_val
+                    .get("method")
+                    .and_then(|m| m.as_str())
+                    .map(str::to_owned);
+                let has_id = json_val.get("id").is_some_and(|v| !v.is_null());
+
+                if method.as_deref() == Some("initialize") {
+                    if let Some(params) = json_val.get_mut("params").and_then(|p| p.as_object_mut())
+                    {
+                        if params.get("capabilities").is_none_or(|c| c.is_null()) {
+                            params.insert("capabilities".to_string(), serde_json::json!({}));
+                        }
+                        if params.get("clientInfo").is_none_or(|c| c.is_null()) {
+                            params.insert(
+                                "clientInfo".to_string(),
+                                serde_json::json!({"name": "mcp-client", "version": "1.0.0"}),
+                            );
+                        }
+                    }
+                }
+
+                let normalized_str =
+                    serde_json::to_string(&json_val).unwrap_or_else(|_| trimmed.to_string());
+
+                if serde_json::from_str::<ClientJsonRpcMessage>(&normalized_str).is_ok() {
+                    if !initialized {
+                        match method.as_deref() {
+                            Some("initialize") => {}
+                            Some("notifications/initialized") => {
+                                initialized = true;
+                            }
+                            _ => {
+                                if !has_id {
+                                    line.clear();
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+
+                    let mut out = normalized_str.into_bytes();
+                    out.push(b'\n');
+                    if rmcp_in_tx.write_all(&out).await.is_err() {
+                        break;
+                    }
+                    let _ = rmcp_in_tx.flush().await;
+                } else if has_id {
+                    let id = json_val
+                        .get("id")
+                        .cloned()
+                        .unwrap_or(serde_json::Value::Null);
+                    let err_resp = serde_json::json!({
+                        "jsonrpc": "2.0",
+                        "id": id,
+                        "error": {
+                            "code": -32601,
+                            "message": format!("Method not found: {}", method.unwrap_or_default())
+                        }
+                    });
+                    if let Ok(mut bytes) = serde_json::to_vec(&err_resp) {
+                        bytes.push(b'\n');
+                        let _ = stdout_tx.send(bytes);
+                    }
+                }
+            }
+
+            line.clear();
+        }
+    });
+
+    (rmcp_in_rx, rmcp_out_tx)
+}
+
 async fn run_mcp_server(config: Config) -> Result<(), Box<dyn std::error::Error>> {
-    // Create and serve the handler using rust-sdk standard pattern
+    // Create and serve the handler using rust-sdk standard pattern with compatibility stdio
     let service = EmbeddedDebuggerToolHandler::new(config)
-        .serve(stdio())
+        .serve(compat_stdio())
         .await
         .inspect_err(|e| {
             error!("Serving error: {:?}", e);
@@ -324,5 +459,51 @@ mod tests {
         assert!(config.validate().is_ok());
         assert_eq!(config.server.max_sessions, 5);
         assert_eq!(config.debugger.default_speed_khz, 4000);
+    }
+
+    #[tokio::test]
+    async fn test_compat_transport_handles_discover_and_pre_handshake_notifications() {
+        use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
+
+        let (mut client_in_tx, client_in_rx) = tokio::io::duplex(4096);
+        let (client_out_tx, client_out_rx) = tokio::io::duplex(4096);
+
+        let (rmcp_in_rx, _rmcp_out_tx) = compat_transport(client_in_rx, client_out_tx);
+        let mut client_out_reader = BufReader::new(client_out_rx);
+        let mut rmcp_in_reader = BufReader::new(rmcp_in_rx);
+
+        // 1. Send MCP 2026-07-28 `server/discover` request -> should get -32601 on stdout without closing rmcp stream
+        client_in_tx
+            .write_all(b"{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"server/discover\",\"params\":{\"protocolVersion\":\"2026-07-28\"}}\n")
+            .await
+            .unwrap();
+        client_in_tx.flush().await.unwrap();
+
+        let mut out_line = String::new();
+        client_out_reader.read_line(&mut out_line).await.unwrap();
+        let resp: serde_json::Value = serde_json::from_str(&out_line).unwrap();
+        assert_eq!(resp["id"], 1);
+        assert_eq!(resp["error"]["code"], -32601);
+
+        // 2. Send a pre-handshake notification (`notifications/roots/list_changed`) -> should be filtered out before `notifications/initialized`
+        client_in_tx
+            .write_all(b"{\"jsonrpc\":\"2.0\",\"method\":\"notifications/roots/list_changed\"}\n")
+            .await
+            .unwrap();
+
+        // 3. Send legacy `initialize` request -> should arrive first on rmcp_in_rx
+        client_in_tx
+            .write_all(b"{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\"}}\n")
+            .await
+            .unwrap();
+        client_in_tx.flush().await.unwrap();
+
+        let mut rmcp_line = String::new();
+        rmcp_in_reader.read_line(&mut rmcp_line).await.unwrap();
+        let forwarded: serde_json::Value = serde_json::from_str(&rmcp_line).unwrap();
+        assert_eq!(forwarded["id"], 2);
+        assert_eq!(forwarded["method"], "initialize");
+        assert!(forwarded["params"]["capabilities"].is_object());
+        assert!(forwarded["params"]["clientInfo"].is_object());
     }
 }
